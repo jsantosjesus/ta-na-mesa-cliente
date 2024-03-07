@@ -1,0 +1,83 @@
+@font-face {
+    font-family: 'montserratArabic';
+    src: local('montserratArabic'), url(../../fonts/montserratArabic/Montserrat-Arabic-Regular-400.otf) format('opentype');
+  }
+
+  @font-face {
+    font-family: 'montserratArabic600';
+    src: local('montserratArabic600'), url(../../fonts/montserratArabic/Montserrat-Arabic-SemiBold-600.otf) format('opentype');
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family= Montserrat :wght@900 & display=swap');
+
+.bodyConfirmarMesa{
+    
+    background-color: #ff881f;
+    height: 100vh;
+    text-align: center;
+    font-family: montserratArabic, serif;
+    font-size: 20px;
+}
+
+.bodyConfirmarMesa img{
+    margin-top: 30px;
+    width: 80vw;
+    height: auto;
+}
+
+.bodyConfirmarMesa .form{
+    margin-top: 50px;
+    color: white;
+
+}
+
+.titleInputName, .titleMesa{
+    font-family: montserratArabic600, montserratArabic, serif;
+}
+
+.inputName{
+    background-color: transparent;
+    text-align: center;
+    border: none;
+    color: white;
+    border-bottom: solid 1px #efefef;
+    padding-bottom: 10px;
+    width: 70%;
+}
+
+.inputName::placeholder{
+    color: #efefef;
+    font-size: 20px;
+}
+
+.titleMesa{
+    margin-top: 30px;
+    width: 50%;
+    margin-left: 25%;
+}
+
+.buttonConfirmarMesa{
+    font-size: 20px;
+    color: #ff881f;
+    padding: 20px;
+    background-color: white;
+    font-family: 'Montserrat', sans-serif;
+    padding: 20px;
+    margin-top: 30px;
+    border: none;
+    border-radius: 100px;
+    width: 60%;
+}
+
+/* .bodyConfirmarMesa button{
+    font-size: 20px;
+    padding: 18px;
+    font-family: 'Montserrat', sans-serif;
+    padding: 10px;
+    margin-top: 30px;
+    border: solid 1px white;
+    border-radius: 100px;
+    width: 60%;
+    background-color: transparent;
+    color: white;
+} */
