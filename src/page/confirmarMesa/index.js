@@ -10,11 +10,18 @@ function ConfirmarMesa() {
     const app = useContext(FirebaseContext);
     const db = getFirestore(app);
 
+    const {login, user} = useContext(DocsContext);
+
     const [mesa, setMesa] = useState();
     const [estabelecimento, setEstabelecimento] = useState();
     const [nome, setNome] = useState();
     const {id} = useParams();
-    const {login, user} = useContext(DocsContext);
+
+    // enquanto essa merda de react não atualiza o useState, tenho que usar esse UseEffect
+    useEffect(() => {
+        setNome(user);
+    }, [user])
+    
 
 
     // função para pegar a mesa
@@ -74,11 +81,11 @@ function ConfirmarMesa() {
                 <img src={logo} alt='logomarca'></img>
                 <div className='form'>
                     <p className='titleInputName'><b>Como quer ser chamado?</b></p>
-                    <input className='inputName' type='name' placeholder="Digite aqui" defaultValue={user} onChange={(e) => setNome(e.target.value)} />
+                    <input className='inputName' type='name' placeholder="Digite aqui" value={nome} onChange={(e) => setNome(e.target.value)} />
                     <p className='titleMesa'><b>VOCÊ ESTÁ EM</b></p>
                     <p>{estabelecimento && estabelecimento.nome}</p>
                     <p>Mesa {mesa && mesa.numero}</p>
-                    <button className='buttonConfirmarMesa' onClick={enviarDadosProvider}>Confirmar</button>
+                    {nome ? <button className='buttonConfirmarMesa' onClick={enviarDadosProvider}>Confirmar</button> : <button className='buttonConfirmarMesa' style={{opacity: '0.7'}}>Confirmar</button>}
                 </div>
             </div>
         </>

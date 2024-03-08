@@ -6,13 +6,15 @@ import Rotas from './router';
 
 function App() {
   return (
+
     <FirebaseProvider>
       <div className="App">
         <BrowserRouter>
-          <Rotas />
+            <Rotas />
         </BrowserRouter>
       </div>
     </FirebaseProvider>
+
   );
 }
 

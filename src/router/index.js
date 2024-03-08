@@ -2,32 +2,26 @@
 import { Routes, Route } from 'react-router-dom';
 import ConfirmarMesa from '../page/confirmarMesa';
 import Cardapio from '../page/cardapio';
-import { DocsProvicer } from '../contexts/docsContext';
+import { DocsContext, DocsProvicer } from '../contexts/docsContext';
+import { useContext } from 'react';
 
 export default function Rotas() {
 
 
-    //   const Private = ({ children, admin, login }) => {
+    const Private = ({ children }) => {
 
+        const { loading, user, mesa, estabelecimento } = useContext(DocsContext);
 
-    //     if (loading) {
-    //       return <div>Carregando...</div>;
-    //     }
+        if (loading) {
+            return <div>Carregando...</div>;
+        }
 
-    //     if (!login && !authenticated) {
-    //       return <Navigate to="/login" />;
-    //     }
+        if (!user || !mesa || !estabelecimento) {
+            return <div>Tente escanear o QR code</div>
+        }
 
-    //     if (login && authenticated) {
-    //       return <Navigate to="/" />;
-    //     }
-
-    //     if (admin && !user.adm) {
-    //       return <Navigate to="/" />;
-    //     }
-
-    //     return children;
-    //   };
+        return children;
+    };
     return (
         <DocsProvicer>
             <Routes>
@@ -37,12 +31,13 @@ export default function Rotas() {
                     element={
                         <ConfirmarMesa />
                     } />
-
                 <Route
                     exact
                     path="/cardapio"
                     element={
-                        <Cardapio />
+                        <Private>
+                            <Cardapio />
+                        </Private>
                     } />
             </Routes>
         </DocsProvicer>
