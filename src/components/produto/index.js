@@ -1,6 +1,7 @@
 import { FaChevronLeft } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import imagemVaziaLogo from '../../assets/ta-na-mesa-logomarca.png';
+import Variacoes from "./variacoes";
 
 export const Produto = ({ produto, handleClose }) => {
 
@@ -91,6 +92,7 @@ export const Produto = ({ produto, handleClose }) => {
                 <h3 className='titleProdutoIndividual'>{produto.nome}</h3>
                 <p className='descricaoProdutoIndividual'>{produto.descricao}</p>
                 <textarea id='textObservacao' onChange={e => setObservacoes(e.target.value)} placeholder='Observações' />
+                {produto.variacoes && <Variacoes />}
             </div>}
             <div className='footerProdutoIndividual'>
                 <div className='PrecoProdutoIndividual'>
