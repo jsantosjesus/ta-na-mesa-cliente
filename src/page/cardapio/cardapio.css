@@ -99,6 +99,7 @@
     color: #914f16;
     font-size: 15px;
     max-width: 60%;
+    text-align: left;
 }
 
 .produtoDescricao{
@@ -109,6 +110,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin-right: 0;
+    text-align: left;
 }
 
 .produtoPreco{
