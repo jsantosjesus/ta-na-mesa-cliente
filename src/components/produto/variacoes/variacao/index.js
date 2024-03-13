@@ -6,7 +6,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-export const Variacao = ({variacao, index, mandarParaVariacoes, variacoesSelecionadas}) => {
+export const Variacao = ({ variacao, index, mandarParaVariacoes, variacoesSelecionadas }) => {
 
 
   const adicionarRemoverOpcao = (valor, opcao) => {
@@ -15,9 +15,9 @@ export const Variacao = ({variacao, index, mandarParaVariacoes, variacoesSelecio
     let totalAdicional = 0;
 
     variacoesSelecionadas.map((vari) => {
-      if(vari.nome === variacao.nome){
-       op = vari.opcoes; 
-       totalAdicional = vari.total;
+      if (vari.nome === variacao.nome) {
+        op = vari.opcoes;
+        totalAdicional = vari.total;
       }
 
       return null;
@@ -47,27 +47,28 @@ export const Variacao = ({variacao, index, mandarParaVariacoes, variacoesSelecio
     mandarParaVariacoes(vari);
   }
 
-    return(
-        <Accordion key={index}>
-            <AccordionSummary
-              //   expandIcon={<ExpandMoreIcon />}
-              aria-controls={index}
-              id={index}
-            >
-              <b>{variacao.nome}</b> (min: {variacao.minimo}, max: {variacao.maximo})
-            </AccordionSummary>
-            <AccordionDetails>
-              <FormGroup>
-                {variacao.opcoes.map((opcao) => {
-                  return (
-                    <FormControlLabel
-                      control={<Checkbox />}
-                      onChange={(e) => adicionarRemoverOpcao(e.target.checked, opcao)}
-                      label={opcao.valor_adicional ? `${opcao.nome} (+${opcao.valor_adicional.toFixed(2).replace(".", ",")})` : opcao.nome} />
-                  )
-                })}
-              </FormGroup>
-            </AccordionDetails>
-          </Accordion>
-    );
+  return (
+    <Accordion key={index}>
+      <AccordionSummary
+        //   expandIcon={<ExpandMoreIcon />}
+        aria-controls={index}
+        id={index}
+      >
+        <b>{variacao.nome}</b> (min: {variacao.minimo}, max: {variacao.maximo})
+      </AccordionSummary>
+      <AccordionDetails>
+        <FormGroup>
+          {variacao.opcoes.map((opcao, index) => {
+            return (
+              <FormControlLabel
+                key={index}
+                control={<Checkbox />}
+                onChange={(e) => adicionarRemoverOpcao(e.target.checked, opcao)}
+                label={opcao.valor_adicional ? `${opcao.nome} (+${opcao.valor_adicional.toFixed(2).replace(".", ",")})` : opcao.nome} />
+            )
+          })}
+        </FormGroup>
+      </AccordionDetails>
+    </Accordion>
+  );
 }

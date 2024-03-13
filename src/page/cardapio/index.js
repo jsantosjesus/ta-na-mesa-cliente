@@ -104,7 +104,7 @@ function Cardapio() {
                 <CircularProgress />
             </Box> : <div className='produtosCardapio'>
                 {produtos && produtos.map((produto) => (
-                    <div>
+                    <div key={produto.id}>
                         <div className="produtos"
                             onClick={() => setProdutoSelecionado(produto)}
                             key={produto}

@@ -32,7 +32,7 @@ export default function Variacoes({ variacoes, mandarParaProduto, variacoesSelec
     <div>
       {variacoes && variacoes.map((variacao, index) => {
         return (
-          <Variacao variacao={variacao} index={index} mandarParaVariacoes={adicionarVariacao} variacoesSelecionadas={variacoesSelecionadas}/>
+          <Variacao key={index} variacao={variacao} index={index} mandarParaVariacoes={adicionarVariacao} variacoesSelecionadas={variacoesSelecionadas}/>
         )
       })}
     </div>

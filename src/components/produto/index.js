@@ -58,10 +58,11 @@ export const Produto = ({ produto, handleClose }) => {
             id: produto.id,
             ...(produto.imagem && { imagem: produto.imagem }),
             nome: produto.nome,
-            preco: produto.preco,
+            preco: produto.preco + totalVariacoes,
             categoria: produto.categoria,
             observacao: observacoes,
-            quantidade: quantidade
+            quantidade: quantidade,
+            ...(variacoesSelecionadas.length !== 0 && {variacoes: variacoesSelecionadas})
         }
 
         return p;
@@ -80,7 +81,7 @@ export const Produto = ({ produto, handleClose }) => {
         if (carrinho) {
             novoCarrinho = carrinho;
             for (let i = 0; i < novoCarrinho.length; i++) {
-                if (novoCarrinho[i].id === produtoAdicionado.id && novoCarrinho[i].observacao === produtoAdicionado.observacao) {
+                if (novoCarrinho[i].id === produtoAdicionado.id && novoCarrinho[i].observacao === produtoAdicionado.observacao && !produtoAdicionado.variacoes) {
                     novoCarrinho[i].quantidade = novoCarrinho[i].quantidade + produtoAdicionado.quantidade;
                     encontrado = true;
                     break;
