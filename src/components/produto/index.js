@@ -9,12 +9,29 @@ export const Produto = ({ produto, handleClose }) => {
 
     const [subtotal, setSubtotal] = useState(0);
 
+    const [variacoesSelecionadas, setVariacoesSelecionadas] = useState([]);
+    const [totalVariacoes, setTotalVariacoes] = useState(0);
+
+
+
+    const incluirVariacoes = (varis) => {
+        setVariacoesSelecionadas(varis);
+        let totalVariacoesSelecionadas = 0;
+        // eslint-disable-next-line
+        varis.map((variacao) => {
+            totalVariacoesSelecionadas = totalVariacoesSelecionadas + variacao.total;
+        })
+
+        setTotalVariacoes(totalVariacoesSelecionadas);
+    }
+
+
     const alterarQuantidade = (operador) => {
         setQuantidade(quantidade + operador);
     }
 
     const calcularSubtotal = () => {
-        setSubtotal(produto.preco * quantidade);
+        setSubtotal((totalVariacoes + produto.preco) * quantidade);
     }
 
     const [observacoes, setObservacoes] = useState('')
@@ -22,7 +39,7 @@ export const Produto = ({ produto, handleClose }) => {
     useEffect(() => {
         calcularSubtotal();
         // eslint-disable-next-line
-    }, [quantidade]);
+    }, [quantidade, totalVariacoes]);
 
 
 
@@ -91,8 +108,8 @@ export const Produto = ({ produto, handleClose }) => {
                 <img className='imagemProdutoIndividual' src={!produto.imagem ? imagemVaziaLogo : produto.imagem} alt='imagem do produto' />
                 <h3 className='titleProdutoIndividual'>{produto.nome}</h3>
                 <p className='descricaoProdutoIndividual'>{produto.descricao}</p>
+                {produto.variacoes && <Variacoes variacoes={produto.variacoes} mandarParaProduto={incluirVariacoes} variacoesSelecionadas={variacoesSelecionadas}/>}
                 <textarea id='textObservacao' onChange={e => setObservacoes(e.target.value)} placeholder='Observações' />
-                {produto.variacoes && <Variacoes />}
             </div>}
             <div className='footerProdutoIndividual'>
                 <div className='PrecoProdutoIndividual'>
