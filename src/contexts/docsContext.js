@@ -9,12 +9,14 @@ export const DocsProvicer = ({ children }) => {
     const [estabelecimento, setEstabelecimento] = useState();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
+    const [carrinho, setCarrinho] = useState();
 
 
     useEffect(() => {
         const recoveredUser = localStorage.getItem('nomeDoUsuario');
         const recoveredMesa = localStorage.getItem('mesa');
-        const recoveredEstabelecimento = localStorage.getItem('estabelecimento');
+        const recoveredEstabelecimento = localStorage.getItem('estabelecimento');  
+        const recoveredCarrinho = localStorage.getItem('carrinho');
 
         if (recoveredUser) {
             setUser(JSON.parse(recoveredUser));
@@ -26,6 +28,10 @@ export const DocsProvicer = ({ children }) => {
 
         if (recoveredEstabelecimento) {
             setEstabelecimento(JSON.parse(recoveredEstabelecimento));
+        }
+
+        if (recoveredCarrinho) {
+            setCarrinho(JSON.parse(recoveredCarrinho));
         }
 
         setLoading(false);
@@ -47,8 +53,14 @@ export const DocsProvicer = ({ children }) => {
         // navigate('/login');
     };
 
+    const adicionarAoCarrinho = (carrinho) => {
+        localStorage.setItem('carrinho', JSON.stringify(carrinho))
+
+        setCarrinho(carrinho);
+    }
+
     return (
-        <DocsContext.Provider value={{ user, estabelecimento, mesa, login, apagarNome, loading }}>
+        <DocsContext.Provider value={{ user, estabelecimento, mesa, login, apagarNome, loading, carrinho, adicionarAoCarrinho }}>
             {children}
         </DocsContext.Provider>
     );

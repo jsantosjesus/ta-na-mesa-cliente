@@ -4,6 +4,7 @@ import ConfirmarMesa from '../page/confirmarMesa';
 import Cardapio from '../page/cardapio';
 import { DocsContext, DocsProvicer } from '../contexts/docsContext';
 import { useContext } from 'react';
+import Carrinho from '../page/carrinho';
 
 export default function Rotas() {
 
@@ -37,6 +38,14 @@ export default function Rotas() {
                     element={
                         <Private>
                             <Cardapio />
+                        </Private>
+                    } />
+                    <Route
+                    exact
+                    path="/carrinho"
+                    element={
+                        <Private>
+                            <Carrinho />
                         </Private>
                     } />
             </Routes>

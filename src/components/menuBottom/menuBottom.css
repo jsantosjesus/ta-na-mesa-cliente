@@ -1,4 +1,4 @@
-.bodyMenuBottom{
+.bodyMenuBottom {
     background-color: #efefef;
     position: fixed;
     bottom: 0;
@@ -12,14 +12,15 @@
     height: 20vh;
 }
 
-.bodyMenuBottom a{
+.bodyMenuBottom a {
     margin-left: 25px;
     margin-right: 25px;
     font-size: 20px;
     color: #c8c4c4;
+    position: relative; /* Adicionado para tornar o posicionamento absoluto relativo ao link */
 }
 
-.menuBottomHome{
+.menuBottomHome {
     background-color: #ff881f;
     border-radius: 100%;
     margin-top: 5px;
@@ -27,4 +28,15 @@
     margin-left: 0;
     padding: 15px;
     color: white;
+}
+
+.quantidadeCarrinho {
+    position: absolute;
+    top: -5px; /* Ajuste para posicioná-lo um pouco acima do ícone */
+    right: -10px; /* Ajuste para posicioná-lo um pouco à esquerda do ícone */
+    background-color: red;
+    color: white; /* Cor do texto da notificação */
+    border-radius: 50%; /* Para torná-lo um círculo */
+    padding: 5px; /* Espaçamento dentro do círculo */
+    font-size: 12px; /* Tamanho da fonte da notificação */
 }

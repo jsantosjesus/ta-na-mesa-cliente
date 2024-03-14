@@ -1,9 +1,12 @@
 import { FaChevronLeft } from "react-icons/fa";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import imagemVaziaLogo from '../../assets/ta-na-mesa-logomarca.png';
 import Variacoes from "./variacoes";
+import { DocsContext } from "../../contexts/docsContext";
 
 export const Produto = ({ produto, handleClose }) => {
+
+    const {adicionarAoCarrinho} = useContext(DocsContext);
 
     const [quantidade, setQuantidade] = useState(1);
 
@@ -91,7 +94,8 @@ export const Produto = ({ produto, handleClose }) => {
         if (!encontrado) {
             novoCarrinho.push(produtoAdicionado);
         }
-        localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
+        // localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
+        adicionarAoCarrinho(novoCarrinho);
         setObservacoes("");
         setQuantidade(1);
         textObservacao.value = ("");
