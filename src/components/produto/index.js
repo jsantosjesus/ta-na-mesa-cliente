@@ -6,7 +6,7 @@ import { DocsContext } from "../../contexts/docsContext";
 
 export const Produto = ({ produto, handleClose }) => {
 
-    const {adicionarAoCarrinho} = useContext(DocsContext);
+    const {adicionarAoCarrinho, carrinho} = useContext(DocsContext);
 
     const [quantidade, setQuantidade] = useState(1);
 
@@ -75,14 +75,14 @@ export const Produto = ({ produto, handleClose }) => {
 
 
     const adicionandoProdutoCarrinho = () => {
-        let carrinho = JSON.parse(localStorage.getItem('carrinho'));
+        // let carrinho = JSON.parse(localStorage.getItem('carrinho'));
         let novoCarrinho = [];
         let produtoAdicionado = formulandoProduto();
         let encontrado = false;
         let textObservacao = document.getElementById("textObservacao")
 
         if (carrinho) {
-            novoCarrinho = carrinho;
+            novoCarrinho = carrinho.produtos;
             for (let i = 0; i < novoCarrinho.length; i++) {
                 if (novoCarrinho[i].id === produtoAdicionado.id && novoCarrinho[i].observacao === produtoAdicionado.observacao && !produtoAdicionado.variacoes) {
                     novoCarrinho[i].quantidade = novoCarrinho[i].quantidade + produtoAdicionado.quantidade;
@@ -94,7 +94,6 @@ export const Produto = ({ produto, handleClose }) => {
         if (!encontrado) {
             novoCarrinho.push(produtoAdicionado);
         }
-        // localStorage.setItem('carrinho', JSON.stringify(novoCarrinho));
         adicionarAoCarrinho(novoCarrinho);
         setObservacoes("");
         setQuantidade(1);

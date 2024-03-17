@@ -53,11 +53,30 @@ export const DocsProvicer = ({ children }) => {
         // navigate('/login');
     };
 
-    const adicionarAoCarrinho = (carrinho) => {
-        localStorage.setItem('carrinho', JSON.stringify(carrinho))
+    const adicionarAoCarrinho = (produtos) => {
 
-        setCarrinho(carrinho);
+        let total = 0;
+
+        produtos.map((produto) => {
+            total = total + (produto.quantidade * produto.preco);
+            return null
+        })
+
+        let car = {
+            produtos: produtos,
+            total: total
+        }
+
+        localStorage.setItem('carrinho', JSON.stringify(car))
+
+        setCarrinho(car);
     }
+
+    // const alterarQuantidadeCarrinho = (produto, operador) => {
+    //     let quantidade = produto.quantidade;
+
+
+    // }
 
     return (
         <DocsContext.Provider value={{ user, estabelecimento, mesa, login, apagarNome, loading, carrinho, adicionarAoCarrinho }}>

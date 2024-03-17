@@ -1,0 +1,118 @@
+@font-face {
+    font-family: 'gijsuy';
+    src: local('gijsuy'), url(../../fonts/gijsuy/gijsuy-gijsuy-400.otf) format('opentype');
+  }
+  @import url('https://fonts.googleapis.com/css2?family= Montserrat :wght@900 & display=swap');
+
+  .bodyCarrinho{
+    margin: 0;
+    padding: 0;
+    background-color: #efefef;
+    height: 100vh;
+    width: 100vw;
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+.titleCarrinho{
+    text-align: center;   
+}
+
+.produtoCarrinho{
+    display: flex;
+    border-bottom: solid 1px #c8c4c4;
+    border-top: solid 1px #c8c4c4;
+    height: 100px;
+    width: 100%;
+    
+}
+
+.produtoCarrinhoInformacoes{
+    display: block;
+    margin-left: 10px;
+    width: 90%;
+}
+
+.produtoCarrinhoImagem{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+.produtoCarrinho h3{
+    margin-top: 6px;
+    margin-bottom: 0;
+    font-family: 'gijsuy', sans-serif;
+    color: #914f16;
+    font-size: 15px;
+    max-width: 60%;
+    text-align: left;
+}
+
+.produtoCarrinhoDescricao{
+    margin-top: 3px;
+    font-size: 12px;
+    max-width: 60%;
+    max-height: 30px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 0;
+    text-align: left;
+}
+
+.produtoCarrinhPreco{
+    text-align: end;
+    margin: 0;
+    width: 90%;
+    font-family: 'gijsuy', sans-serif;
+    color: #914f16;
+}
+
+
+.produtoQuantidadeCarrinho{
+    display: flex;
+    margin-top: 10px;
+}
+
+.produtoQuantidadeCarrinho span{
+    height: 20px;
+    width: 20px;
+    background-color: #818181;
+    border-radius: 50%;
+}
+
+.produtoCarrinhoDelete{
+    margin-left: 40px !important;
+}
+
+.produtoQuantidadeCarrinho p{
+    margin: 0 10px 0 10px;
+}
+
+/* footer do carrinho */
+
+.footerCarrinho{
+    display: flex;
+    width: 100vw;
+    position: fixed;
+    bottom: 0;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    
+}
+
+
+.footerCarrinho button{
+    width: 50%;
+    text-align: center;
+    height: 40px;
+    border-radius: 25px;
+    width: 80%;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #ff881f;
+    color: white;
+}
+

@@ -24,7 +24,7 @@ function MenuBottom() {
         if (recoveredCarrinho) {
 
             let quantidade = 0;
-            recoveredCarrinho.map((produto) => {
+            recoveredCarrinho.produtos.map((produto) => {
                 quantidade = quantidade + produto.quantidade;
                 return null
             })
