@@ -62,7 +62,6 @@ export const Produto = ({ produto, handleClose }) => {
             ...(produto.imagem && { imagem: produto.imagem }),
             nome: produto.nome,
             preco: produto.preco + totalVariacoes,
-            categoria: produto.categoria,
             observacao: observacoes,
             quantidade: quantidade,
             ...(variacoesSelecionadas.length !== 0 && {variacoes: variacoesSelecionadas})

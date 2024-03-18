@@ -64,7 +64,9 @@ export const DocsProvicer = ({ children }) => {
 
         let car = {
             produtos: produtos,
-            total: total
+            total: total,
+            mesa: mesa,
+            estabelecimento_id: estabelecimento.id
         }
 
         localStorage.setItem('carrinho', JSON.stringify(car))

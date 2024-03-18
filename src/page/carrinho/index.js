@@ -1,14 +1,20 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { DocsContext } from "../../contexts/docsContext"
 import { FaChevronLeft } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import imagemVaziaLogo from '../../assets/ta-na-mesa-logomarca.png'
 import { Link } from "react-router-dom";
 import './carrinho.css';
+import { FirebaseContext } from "../../contexts/appContext";
+import { collection, query, where, getDocs, getFirestore, addDoc } from "firebase/firestore";
 
 function Carrinho() {
 
-    const { carrinho, adicionarAoCarrinho } = useContext(DocsContext);
+    const app = useContext(FirebaseContext);
+    const db = getFirestore(app);
+
+    const { carrinho, adicionarAoCarrinho, mesa, user } = useContext(DocsContext);
+    const [loading, setLoading] = useState(false);
 
     const alterarQuantidadeCarrinho = (produto, index, operador) => {
 
@@ -34,11 +40,78 @@ function Carrinho() {
         adicionarAoCarrinho(newCarrinho);
     }
 
+    const createPedidoFirebase = async (agora, id) => {
+
+        try {
+            await addDoc(collection(db, "pedido"), {
+                conta_id: id,
+                estabelecimento_id: mesa.estabelecimento_id,
+                dataPedido: agora,
+                mesa: {
+                    id: mesa.id,
+                    numero: mesa.numero
+                },
+                produtos: carrinho.produtos,
+                status: 'aguardando',
+                total: carrinho.total,
+                usuario: user
+            });
+            console.log("Documento criado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao criar documento:", error);
+        }
+    }
+
+    const fazerPedido = async () => {
+        setLoading(true);
+
+        let conta_id;
+        const agora = new Date();
+
+        if (mesa.status === 'OCUPADA') {
+            async function getConta() {
+                const q = query(collection(db, "conta"), where("mesa_id", "==", mesa.id));
+
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    if (!doc.data().dataPaga) {
+                        conta_id = doc.id;
+                    }
+                });
+
+                if (conta_id) {
+                    createPedidoFirebase(agora, conta_id);
+                }
+            }
+
+            getConta();
+
+        } else if (mesa.status === 'LIVRE') {
+            async function createConta() {
+                const docRef = await addDoc(collection(db, "conta"), {
+                    mesa_id: mesa.id,
+                    dataAberta: agora
+                });
+
+                conta_id = docRef.id
+
+                if (conta_id) {
+                    createPedidoFirebase(agora, conta_id);
+                }
+            }
+
+
+            createConta();
+        }
+
+        setLoading(false);
+    }
+
     return (
         <div className="bodyCarrinho">
-            <Link to='/cardapio'><p className='fecharProdutoIndividual'><FaChevronLeft /></p></Link><h3>Carrinho</h3>
-            <div className='produtosCardapio'>
-                {carrinho.produtos && carrinho.produtos.map((produto, index) => {
+            <Link to='/cardapio'><p className='fecharCarrinho'><FaChevronLeft /></p></Link><h3>Carrinho</h3>
+            {!loading ? <div className='produtosCardapio'>
+                {carrinho && carrinho.produtos.map((produto, index) => {
                     return <div key={index}>
                         <div className="produtoCarrinho"
                             // onClick={() => setProdutoSelecionado(produto)}
@@ -48,6 +121,21 @@ function Carrinho() {
                             <img className='produtoCarrinhoImagem' src={produto.imagem ? produto.imagem : imagemVaziaLogo} alt='imagem do produto' />
                             <div className="produtoCarrinhoInformacoes">
                                 <h3>{produto.nome}</h3>
+                                <div className="produtoCarrinhoDescricao" style={{ fontSize: '10px' }}>
+                                    {produto.variacoes && produto.variacoes.map((variacao, index) => {
+                                        return (
+                                            <span key={index}>
+                                                {variacao.nome}: {variacao.opcoes.map((opcao, index) => {
+                                                    return (
+                                                        <span key={index}>
+                                                            {`${opcao.nome}, `}
+                                                        </span>
+                                                    )
+                                                })}
+                                            </span>
+                                        )
+                                    })}
+                                </div>
                                 <p className="produtoCarrinhoDescricao">{produto.observacao}</p>
                                 <div className="produtoQuantidadeCarrinho"><span onClick={() => {
                                     if (produto.quantidade > 1) {
@@ -69,10 +157,14 @@ function Carrinho() {
 
                 )
                 }
-            </div>
+            </div> : <p>carregando...</p>}
             <div className='footerCarrinho'>
-                <div>{carrinho.total}</div>
-                    <button>Fazer Pedido</button>
+                <div className="footerCarrinhoTotal"><p>Total</p><p>R$ {carrinho ? carrinho.total.toFixed(2).replace(".", ",") : "0,00"}</p></div>
+                {carrinho && 
+                carrinho.produtos && 
+                carrinho.produtos.length > 0 && 
+                !loading ? <button onClick={fazerPedido}>Fazer Pedido</button> : 
+                <button style={{opacity: '0.5'}}>Fazer Pedido</button>}
             </div>
         </div>
     )

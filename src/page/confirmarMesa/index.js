@@ -10,18 +10,18 @@ function ConfirmarMesa() {
     const app = useContext(FirebaseContext);
     const db = getFirestore(app);
 
-    const {login, user} = useContext(DocsContext);
+    const { login, user } = useContext(DocsContext);
 
     const [mesa, setMesa] = useState();
     const [estabelecimento, setEstabelecimento] = useState();
     const [nome, setNome] = useState();
-    const {id} = useParams();
+    const { id } = useParams();
 
     // enquanto essa merda de react não atualiza o useState, tenho que usar esse UseEffect
     useEffect(() => {
         setNome(user);
     }, [user])
-    
+
 
 
     // função para pegar a mesa
@@ -30,10 +30,12 @@ function ConfirmarMesa() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            // console.log("Document data:", docSnap.data());
-            setMesa(docSnap.data())
+            const data = docSnap.data();
+            // Adicionando o ID ao objeto de dados
+            data.id = docSnap.id;
+            setMesa(data)
             // chama a função que puxa o estabelecimento
-            getEstabelecimento(docSnap.data().estabelecimento_id);
+            getEstabelecimento(data.estabelecimento_id);
         } else {
             // docSnap.data() will be undefined in this case
             console.log("Erro");
@@ -47,8 +49,10 @@ function ConfirmarMesa() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            // console.log("Document data:", docSnap.data());
-            setEstabelecimento(docSnap.data())
+            const data = docSnap.data();
+            // Adicionando o ID ao objeto de dados
+            data.id = docSnap.id;
+            setEstabelecimento(data);
         } else {
             // docSnap.data() will be undefined in this case
             console.log("Erro");
@@ -85,7 +89,7 @@ function ConfirmarMesa() {
                     <p className='titleMesa'><b>VOCÊ ESTÁ EM</b></p>
                     <p>{estabelecimento && estabelecimento.nome}</p>
                     <p>Mesa {mesa && mesa.numero}</p>
-                    {nome ? <button className='buttonConfirmarMesa' onClick={enviarDadosProvider}>Confirmar</button> : <button className='buttonConfirmarMesa' style={{opacity: '0.7'}}>Confirmar</button>}
+                    {nome ? <button className='buttonConfirmarMesa' onClick={enviarDadosProvider}>Confirmar</button> : <button className='buttonConfirmarMesa' style={{ opacity: '0.7' }}>Confirmar</button>}
                 </div>
             </div>
         </>
