@@ -1,19 +1,13 @@
-import { getFirestore, doc, getDoc } from 'firebase/firestore/lite';
 import React, { useContext, useEffect, useState } from 'react';
-import { FirebaseContext } from '../../contexts/appContext';
 import logo from '../../assets/logomarca.png';
 import './confirmarMesa.css';
 import { useParams } from 'react-router-dom';
 import { DocsContext } from '../../contexts/docsContext';
 
 function ConfirmarMesa() {
-    const app = useContext(FirebaseContext);
-    const db = getFirestore(app);
 
-    const { login, user } = useContext(DocsContext);
+    const { login, user, mesa, estabelecimento, getMesa } = useContext(DocsContext);
 
-    const [mesa, setMesa] = useState();
-    const [estabelecimento, setEstabelecimento] = useState();
     const [nome, setNome] = useState();
     const { id } = useParams();
 
@@ -24,60 +18,11 @@ function ConfirmarMesa() {
 
 
 
-    // função para pegar a mesa
-    async function getMesa() {
-        const docRef = doc(db, "mesa", id);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            // Adicionando o ID ao objeto de dados
-            data.id = docSnap.id;
-            setMesa(data)
-            // chama a função que puxa o estabelecimento
-            getEstabelecimento(data.estabelecimento_id);
-        } else {
-            // docSnap.data() will be undefined in this case
-            console.log("Erro");
-        }
-
-    }
-
-    // função para puxar o estabelecimento
-    async function getEstabelecimento(id) {
-        const docRef = doc(db, "estabelecimento", id);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            // Adicionando o ID ao objeto de dados
-            data.id = docSnap.id;
-            setEstabelecimento(data);
-        } else {
-            // docSnap.data() will be undefined in this case
-            console.log("Erro");
-        }
-
-    }
-
     // assim que a pagina é carregada ela já chama a função getMesa
     useEffect(() => {
-        if (!mesa) {
-            getMesa();
-        }
-    })
-
-    //Ao confirmar, mando dados de estabelecimento, mesa e usuario para o provider
-    const enviarDadosProvider = () => {
-        const dados = {
-            estabelecimento: estabelecimento,
-            mesa: mesa,
-            nomeDoUsuario: nome
-        }
-
-        login(dados)
-    }
-
+        getMesa(id);
+        // eslint-disable-next-line
+    }, [])
 
     return (
         <>
@@ -89,7 +34,7 @@ function ConfirmarMesa() {
                     <p className='titleMesa'><b>VOCÊ ESTÁ EM</b></p>
                     <p>{estabelecimento && estabelecimento.nome}</p>
                     <p>Mesa {mesa && mesa.numero}</p>
-                    {nome ? <button className='buttonConfirmarMesa' onClick={enviarDadosProvider}>Confirmar</button> : <button className='buttonConfirmarMesa' style={{ opacity: '0.7' }}>Confirmar</button>}
+                    {nome && estabelecimento && mesa ? <button className='buttonConfirmarMesa' onClick={() => { login(user) }}>Confirmar</button> : <button className='buttonConfirmarMesa' style={{ opacity: '0.7' }}>Confirmar</button>}
                 </div>
             </div>
         </>

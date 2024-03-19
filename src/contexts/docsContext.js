@@ -1,5 +1,7 @@
-import { createContext, useEffect, useState } from 'react';
+import { doc, getDoc, getFirestore, onSnapshot } from 'firebase/firestore';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FirebaseContext } from './appContext';
 
 export const DocsContext = createContext();
 
@@ -11,39 +13,56 @@ export const DocsProvicer = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [carrinho, setCarrinho] = useState();
 
+    const app = useContext(FirebaseContext);
+    const db = getFirestore(app);
+
 
     useEffect(() => {
         const recoveredUser = localStorage.getItem('nomeDoUsuario');
-        const recoveredMesa = localStorage.getItem('mesa');
-        const recoveredEstabelecimento = localStorage.getItem('estabelecimento');  
-        const recoveredCarrinho = localStorage.getItem('carrinho');
 
         if (recoveredUser) {
             setUser(JSON.parse(recoveredUser));
         }
 
-        if (recoveredMesa) {
-            setMesa(JSON.parse(recoveredMesa));
-        }
-
-        if (recoveredEstabelecimento) {
-            setEstabelecimento(JSON.parse(recoveredEstabelecimento));
-        }
-
-        if (recoveredCarrinho) {
-            setCarrinho(JSON.parse(recoveredCarrinho));
-        }
-
         setLoading(false);
     }, []);
 
-    const login = (dados) => {
-        localStorage.setItem('nomeDoUsuario', JSON.stringify(dados.nomeDoUsuario));
-        localStorage.setItem('mesa', JSON.stringify(dados.mesa));
-        localStorage.setItem('estabelecimento', JSON.stringify(dados.estabelecimento));
-        setUser(dados.nomeDoUsuario);
-        setEstabelecimento(dados.estabelecimento);
-        setMesa(dados.mesa);
+    const getMesa = (id) => {
+
+        onSnapshot(doc(db, "mesa", id), (doc) => {
+
+            if (doc) {
+                const dataMesa = doc.data();
+                dataMesa.id = doc.id;
+                setMesa(dataMesa);
+                getEstabelecimento(dataMesa.estabelecimento_id);
+            }
+        });
+
+
+    }
+
+    const getEstabelecimento = async (id) => {
+        const docRef = doc(db, "estabelecimento", id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            console.log("Document data:", docSnap.data());
+
+            const dataEstabelecimento = docSnap.data();
+            dataEstabelecimento.id = docSnap.id;
+
+            setEstabelecimento(dataEstabelecimento);
+
+        } else {
+            // docSnap.data() will be undefined in this case
+            console.log("No such document!");
+        }
+    }
+
+    const login = (usuario) => {
+        localStorage.setItem('nomeDoUsuario', JSON.stringify(usuario));
+        setUser(usuario);
         navigate('/cardapio');
     };
 
@@ -69,19 +88,16 @@ export const DocsProvicer = ({ children }) => {
             estabelecimento_id: estabelecimento.id
         }
 
-        localStorage.setItem('carrinho', JSON.stringify(car))
-
         setCarrinho(car);
     }
 
-    // const alterarQuantidadeCarrinho = (produto, operador) => {
-    //     let quantidade = produto.quantidade;
+    const apagarCarrinho = () => {
 
-
-    // }
+        setCarrinho();
+    }
 
     return (
-        <DocsContext.Provider value={{ user, estabelecimento, mesa, login, apagarNome, loading, carrinho, adicionarAoCarrinho }}>
+        <DocsContext.Provider value={{ user, estabelecimento, mesa, getMesa, login, apagarNome, loading, carrinho, adicionarAoCarrinho, apagarCarrinho }}>
             {children}
         </DocsContext.Provider>
     );

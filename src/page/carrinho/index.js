@@ -3,17 +3,20 @@ import { DocsContext } from "../../contexts/docsContext"
 import { FaChevronLeft } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import imagemVaziaLogo from '../../assets/ta-na-mesa-logomarca.png'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import './carrinho.css';
 import { FirebaseContext } from "../../contexts/appContext";
-import { collection, query, where, getDocs, getFirestore, addDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, getFirestore, addDoc, doc, updateDoc } from "firebase/firestore";
+
 
 function Carrinho() {
 
     const app = useContext(FirebaseContext);
     const db = getFirestore(app);
 
-    const { carrinho, adicionarAoCarrinho, mesa, user } = useContext(DocsContext);
+    const navigate = useNavigate();
+
+    const { carrinho, adicionarAoCarrinho, apagarCarrinho, mesa, user } = useContext(DocsContext);
     const [loading, setLoading] = useState(false);
 
     const alterarQuantidadeCarrinho = (produto, index, operador) => {
@@ -57,9 +60,20 @@ function Carrinho() {
                 usuario: user
             });
             console.log("Documento criado com sucesso!");
+
+            apagarCarrinho();
+
+            navigate('/cardapio');
+
         } catch (error) {
             console.error("Erro ao criar documento:", error);
         }
+    }
+
+    const alterarStatusMesa = async () => {
+        await updateDoc(doc(db, "mesa", mesa.id), {
+            status: 'OCUPADA',
+        });
     }
 
     const fazerPedido = async () => {
@@ -68,7 +82,6 @@ function Carrinho() {
         let conta_id;
         const agora = new Date();
 
-        if (mesa.status === 'OCUPADA') {
             async function getConta() {
                 const q = query(collection(db, "conta"), where("mesa_id", "==", mesa.id));
 
@@ -81,28 +94,27 @@ function Carrinho() {
 
                 if (conta_id) {
                     createPedidoFirebase(agora, conta_id);
+                } else{
+                    async function createConta() {
+                        const docRef = await addDoc(collection(db, "conta"), {
+                            mesa_id: mesa.id,
+                            dataAberta: agora
+                        });
+        
+                        conta_id = docRef.id
+        
+                        if (conta_id) {
+                            createPedidoFirebase(agora, conta_id);
+                            alterarStatusMesa();
+                        }
+                    }
+        
+        
+                    createConta();
                 }
             }
 
             getConta();
-
-        } else if (mesa.status === 'LIVRE') {
-            async function createConta() {
-                const docRef = await addDoc(collection(db, "conta"), {
-                    mesa_id: mesa.id,
-                    dataAberta: agora
-                });
-
-                conta_id = docRef.id
-
-                if (conta_id) {
-                    createPedidoFirebase(agora, conta_id);
-                }
-            }
-
-
-            createConta();
-        }
 
         setLoading(false);
     }
