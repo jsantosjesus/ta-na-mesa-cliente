@@ -6,7 +6,7 @@ import imagemVaziaLogo from '../../assets/ta-na-mesa-logomarca.png'
 import { Link, useNavigate } from "react-router-dom";
 import './carrinho.css';
 import { FirebaseContext } from "../../contexts/appContext";
-import { collection, query, where, getDocs, getFirestore, addDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, getFirestore, addDoc, doc, updateDoc } from "firebase/firestore";
 
 
 function Carrinho() {
@@ -16,7 +16,7 @@ function Carrinho() {
 
     const navigate = useNavigate();
 
-    const { carrinho, adicionarAoCarrinho, apagarCarrinho, mesa, user } = useContext(DocsContext);
+    const { carrinho, adicionarAoCarrinho, apagarCarrinho, mesa, user, conta } = useContext(DocsContext);
     const [loading, setLoading] = useState(false);
 
     const alterarQuantidadeCarrinho = (produto, index, operador) => {
@@ -79,21 +79,10 @@ function Carrinho() {
     const fazerPedido = async () => {
         setLoading(true);
 
-        let conta_id;
         const agora = new Date();
 
-            async function getConta() {
-                const q = query(collection(db, "conta"), where("mesa_id", "==", mesa.id));
-
-                const querySnapshot = await getDocs(q);
-                querySnapshot.forEach((doc) => {
-                    if (!doc.data().dataPaga) {
-                        conta_id = doc.id;
-                    }
-                });
-
-                if (conta_id) {
-                    createPedidoFirebase(agora, conta_id);
+                if (conta) {
+                    createPedidoFirebase(agora, conta.id);
                 } else{
                     async function createConta() {
                         const docRef = await addDoc(collection(db, "conta"), {
@@ -101,7 +90,7 @@ function Carrinho() {
                             dataAberta: agora
                         });
         
-                        conta_id = docRef.id
+                        const conta_id = docRef.id
         
                         if (conta_id) {
                             createPedidoFirebase(agora, conta_id);
@@ -112,9 +101,9 @@ function Carrinho() {
         
                     createConta();
                 }
-            }
+            
 
-            getConta();
+            
 
         setLoading(false);
     }
@@ -122,7 +111,7 @@ function Carrinho() {
     return (
         <div className="bodyCarrinho">
             <Link to='/cardapio'><p className='fecharCarrinho'><FaChevronLeft /></p></Link><h3>Carrinho</h3>
-            {!loading ? <div className='produtosCardapio'>
+            {!loading ? <div>
                 {carrinho && carrinho.produtos.map((produto, index) => {
                     return <div key={index}>
                         <div className="produtoCarrinho"

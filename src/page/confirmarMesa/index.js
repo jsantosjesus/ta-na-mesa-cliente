@@ -34,7 +34,7 @@ function ConfirmarMesa() {
                     <p className='titleMesa'><b>VOCÊ ESTÁ EM</b></p>
                     <p>{estabelecimento && estabelecimento.nome}</p>
                     <p>Mesa {mesa && mesa.numero}</p>
-                    {nome && estabelecimento && mesa ? <button className='buttonConfirmarMesa' onClick={() => { login(user) }}>Confirmar</button> : <button className='buttonConfirmarMesa' style={{ opacity: '0.7' }}>Confirmar</button>}
+                    {nome && estabelecimento && mesa ? <button className='buttonConfirmarMesa' onClick={() => { login(nome) }}>Confirmar</button> : <button className='buttonConfirmarMesa' style={{ opacity: '0.7' }}>Confirmar</button>}
                 </div>
             </div>
         </>

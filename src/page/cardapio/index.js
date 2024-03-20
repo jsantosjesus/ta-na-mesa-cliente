@@ -73,7 +73,7 @@ function Cardapio() {
 
     return (
         <div className='bodyCardapio'>
-            <MenuBottom />
+            <MenuBottom page='cardapio'/>
             <div className='headCardapio'>
                 <div className='titleCardapio'>
                     <h1>{estabelecimento.nome}</h1>
