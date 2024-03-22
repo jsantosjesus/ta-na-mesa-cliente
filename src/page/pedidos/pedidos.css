@@ -1,0 +1,22 @@
+.divPedido{
+    display: flex;
+    border-bottom: solid 1px #c8c4c4;
+    border-top: solid 1px #c8c4c4;
+    height: 80px;
+    width: 100%;
+    text-align: left;
+    margin-top: 2px;
+}
+
+.divPedido h3, .divPedido p{
+    margin: 0;
+}
+
+.informacoesPedidoPedidos{
+    margin-left: 12px;
+    width: calc(100vw - 104px);
+}
+
+.totalPedidoPedidos{
+    text-align: end;
+}
