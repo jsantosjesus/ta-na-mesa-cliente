@@ -1,0 +1,67 @@
+.bodyConta {
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.titleConta {
+    text-align: center;
+}
+
+.fecharConta {
+    font-size: 30px;
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    color: black;
+}
+
+.ProdutosConta {
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+}
+
+
+.divProdutoConta {
+    display: flex;
+}
+
+.divProdutoConta span {
+    width: 70vw;
+    text-align: left;
+    margin-left: 5vw;
+}
+
+/* footer da conta */
+
+.footerConta {
+    display: block;
+    width: 100vw;
+    position: absolute;
+    bottom: 0;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 20px;
+    height: 100px;
+
+}
+
+.footerContaTotal {
+    display: flex;
+    justify-content: space-around;
+    font-family: 'gijsuy', 'Montserrat', sans-serif;
+    color: #914f16;
+}
+
+
+.footerConta button {
+    text-align: center;
+    height: 40px;
+    border-radius: 25px;
+    width: 80%;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #ff881f;
+    color: white;
+}

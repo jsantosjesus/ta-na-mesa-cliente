@@ -31,7 +31,7 @@ function MenuBottom({page}) {
     return (
         <div className="bodyMenuBottom">
             <Link to='/cardapio'><p className={page === 'cardapio' && "menuBottomHome"}><ImHome /></p></Link>
-            <Link to='/cardapio'><p><FaFileAlt /></p></Link>
+            <Link to='/conta'><p><FaFileAlt /></p></Link>
             <Link to='/pedidos'><p className={page === 'pedidos' && "menuBottomHome"}>{quantidadePedidos > 0 && <span className="quantidadeCarrinho">{quantidadePedidos}</span>}<BsClock /></p></Link>
             <Link to='/carrinho' className="cartLink"><p>{quantidadeCarrinho > 0 && <span className="quantidadeCarrinho">{quantidadeCarrinho}</span>}<ImCart /></p></Link>
             <Link to='/'><p><FaConciergeBell /></p></Link>

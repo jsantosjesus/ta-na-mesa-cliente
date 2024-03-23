@@ -6,6 +6,7 @@ import { DocsContext, DocsProvicer } from '../contexts/docsContext';
 import { useContext } from 'react';
 import Carrinho from '../page/carrinho';
 import Pedidos from '../page/pedidos';
+import Contas from '../page/contas';
 
 export default function Rotas() {
 
@@ -48,6 +49,12 @@ export default function Rotas() {
                         <Private>
                             <Carrinho />
                         </Private>
+                    } />
+                    <Route
+                    exact
+                    path="/conta"
+                    element={
+                        <Contas />
                     } />
                     <Route
                     exact
