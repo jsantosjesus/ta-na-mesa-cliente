@@ -1,5 +1,5 @@
 
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ConfirmarMesa from '../page/confirmarMesa';
 import Cardapio from '../page/cardapio';
 import { DocsContext, DocsProvicer } from '../contexts/docsContext';
@@ -7,6 +7,7 @@ import { useContext } from 'react';
 import Carrinho from '../page/carrinho';
 import Pedidos from '../page/pedidos';
 import Contas from '../page/contas';
+import ChamarGarcom from '../page/chamarGarcom';
 
 export default function Rotas() {
 
@@ -20,7 +21,7 @@ export default function Rotas() {
         }
 
         if (!user || !mesa || !estabelecimento) {
-            return <div>Tente escanear o QR code</div>
+            return <Navigate to="/" />
         }
 
         return children;
@@ -36,13 +37,21 @@ export default function Rotas() {
                     } />
                 <Route
                     exact
+                    path='/'
+                    element={
+                        <div style={{ display: 'grid', placeItems: 'center', height: '100vh' }}>
+                            <b>Tente escanear o QR code</b>
+                        </div>
+                    } />
+                <Route
+                    exact
                     path="/cardapio"
                     element={
                         <Private>
                             <Cardapio />
                         </Private>
                     } />
-                    <Route
+                <Route
                     exact
                     path="/carrinho"
                     element={
@@ -50,17 +59,29 @@ export default function Rotas() {
                             <Carrinho />
                         </Private>
                     } />
-                    <Route
+                <Route
                     exact
                     path="/conta"
                     element={
-                        <Contas />
+                        <Private>
+                            <Contas />
+                        </Private>
                     } />
-                    <Route
+                <Route
                     exact
                     path="/pedidos"
                     element={
-                        <Pedidos />
+                        <Private>
+                            <Pedidos />
+                        </Private>
+                    } />
+                <Route
+                    exact
+                    path="/chamarGarcom"
+                    element={
+                        <Private>
+                            <ChamarGarcom />
+                        </Private>
                     } />
             </Routes>
         </DocsProvicer>

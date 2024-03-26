@@ -17,7 +17,8 @@
 }
 
 .ProdutosConta {
-    max-height: calc(100vh - 180px);
+    max-height: 70vh;
+    background-color: #FFF1A7;
     overflow-y: auto;
 }
 
@@ -43,7 +44,6 @@
     align-items: center;
     padding-top: 5px;
     padding-bottom: 20px;
-    height: 100px;
 
 }
 

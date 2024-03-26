@@ -1,0 +1,37 @@
+@font-face {
+    font-family: 'gijsuy';
+    src: local('gijsuy'), url(../../fonts/gijsuy/gijsuy-gijsuy-400.otf) format('opentype');
+  }
+
+.bodyChamarGarcom {
+    display: grid;
+    place-items: center;
+    height: 100vh;
+}
+
+.bodyChamarGarcom button{
+    text-align: center;
+    height: 40px;
+    border-radius: 25px;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.chamarGarcomParagrafo{
+    font-size: 30px;
+    font-family: 'gijsuy', sans-serif;
+    color: #914f16;
+}
+
+.buttonConfirmarChamarGarcom{    
+    border: none;
+    background-color: #ff881f;
+    color: white;
+}
+
+.buttonCancelarChamarGarcom{
+    border: solid, 1px;
+    border-color: #ff881f;
+    background-color: white;
+    color: #ff881f;
+}

@@ -15,6 +15,7 @@ export const DocsProvicer = ({ children }) => {
     const [quantidadePedidos, setQuantidadePedidos] = useState();
     const [pedidos, setPedidos] = useState();
     const [conta, setConta] = useState();
+    // const [chamado, setChamado] = useState();
 
     const app = useContext(FirebaseContext);
     const db = getFirestore(app);
@@ -38,7 +39,6 @@ export const DocsProvicer = ({ children }) => {
             if (doc) {
                 const dataMesa = doc.data();
                 dataMesa.id = doc.id;
-                console.log(doc.id)
                 setMesa(dataMesa);
                 getEstabelecimento(dataMesa.estabelecimento_id);
             }
@@ -52,7 +52,6 @@ export const DocsProvicer = ({ children }) => {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
 
             const dataEstabelecimento = docSnap.data();
             dataEstabelecimento.id = docSnap.id;
@@ -60,8 +59,7 @@ export const DocsProvicer = ({ children }) => {
             setEstabelecimento(dataEstabelecimento);
 
         } else {
-            // docSnap.data() will be undefined in this case
-            console.log("No such document!");
+            console.log("Sem documento");
         }
     }
 
@@ -71,8 +69,8 @@ export const DocsProvicer = ({ children }) => {
         navigate('/cardapio');
 
         if (mesa) {
-            const q = query(collection(db, "conta"), where("mesa_id", "==", mesa.id));
-            onSnapshot(q, (querySnapshot) => {
+            const queryConta = query(collection(db, "conta"), where("mesa_id", "==", mesa.id));
+            onSnapshot(queryConta, (querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     if (!doc.data().dataPaga) {
                         const cnta = doc.data();
@@ -81,8 +79,7 @@ export const DocsProvicer = ({ children }) => {
                     }
                 })
             });
-
-
+            // getChamado();
         }
     };
 
@@ -105,9 +102,9 @@ export const DocsProvicer = ({ children }) => {
                 // setQuantidadePedidos(quantidade);
                 setQuantidadePedidos(quantidade);
                 setPedidos(pddos);
-                console.log("Current cities in CA: ", pddos);
             });
         }
+        // eslint-disable-next-line
     }, [conta]);
 
     const apagarNome = () => {
@@ -140,10 +137,6 @@ export const DocsProvicer = ({ children }) => {
         setCarrinho();
     }
 
-    // const setarQuantidadePedidos = (pedidos) => {
-    //     setQuantidadePedidos(pedidos);
-    // }
-
 
     return (
         <DocsContext.Provider
@@ -160,7 +153,7 @@ export const DocsProvicer = ({ children }) => {
                 apagarCarrinho,
                 quantidadePedidos,
                 pedidos,
-                conta
+                conta,
             }}>
             {children}
         </DocsContext.Provider>
