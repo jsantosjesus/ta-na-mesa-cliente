@@ -18,6 +18,11 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+.ProdutosDoPedido{
+    overflow: auto;
+    height: 50vh;
+}
+
 .produtosPedido{
     border-bottom: solid 1px #c8c4c4;
     border-top: solid 1px #c8c4c4;

@@ -3,12 +3,22 @@ import React, { useState, useEffect, useContext } from "react";
 import imagemVaziaLogo from '../../assets/ta-na-mesa-logomarca.png';
 import Variacoes from "./variacoes";
 import { DocsContext } from "../../contexts/docsContext";
+import { addDoc, collection, doc, getFirestore, updateDoc } from "firebase/firestore";
+import { FirebaseContext } from "../../contexts/appContext";
 
 export const Produto = ({ produto, handleClose }) => {
 
-    const {adicionarAoCarrinho, carrinho} = useContext(DocsContext);
+    
+    const app = useContext(FirebaseContext);
+    const db = getFirestore(app);
+
+
+
+    const {adicionarAoCarrinho, carrinho, mesa, user, conta} = useContext(DocsContext);
 
     const [quantidade, setQuantidade] = useState(1);
+
+    const [loading, setLoading] = useState(false);
 
     const [subtotal, setSubtotal] = useState(0);
 
@@ -37,7 +47,7 @@ export const Produto = ({ produto, handleClose }) => {
         setSubtotal((totalVariacoes + produto.preco) * quantidade);
     }
 
-    const [observacoes, setObservacoes] = useState('')
+    const [observacoes, setObservacoes] = useState('');
 
     useEffect(() => {
         calcularSubtotal();
@@ -78,7 +88,6 @@ export const Produto = ({ produto, handleClose }) => {
         let novoCarrinho = [];
         let produtoAdicionado = formulandoProduto();
         let encontrado = false;
-        let textObservacao = document.getElementById("textObservacao")
 
         if (carrinho) {
             novoCarrinho = carrinho.produtos;
@@ -94,12 +103,84 @@ export const Produto = ({ produto, handleClose }) => {
             novoCarrinho.push(produtoAdicionado);
         }
         adicionarAoCarrinho(novoCarrinho);
-        setObservacoes("");
-        setQuantidade(1);
-        textObservacao.value = ("");
         handleClose();
 
     };
+
+    // quando clicar em quero já, faço um pedido com o produto
+
+    const createPedidoFirebase = async (agora, id) => {
+
+        try {
+            await addDoc(collection(db, "pedido"), {
+                conta_id: id,
+                estabelecimento_id: mesa.estabelecimento_id,
+                dataPedido: agora,
+                mesa: {
+                    id: mesa.id,
+                    numero: mesa.numero
+                },
+                produtos: [   
+                        {
+                            id: produto.id,
+                            ...(produto.imagem && { imagem: produto.imagem }),
+                            nome: produto.nome,
+                            preco: produto.preco + totalVariacoes,
+                            observacao: observacoes,
+                            quantidade: quantidade,
+                            ...(variacoesSelecionadas.length !== 0 && {variacoes: variacoesSelecionadas})
+                        } 
+                ],
+                status: 'aguardando',
+                total: (produto.preco + totalVariacoes) * quantidade,
+                usuario: user
+            });
+            console.log("Documento criado com sucesso!");
+
+            handleClose();
+
+        } catch (error) {
+            console.error("Erro ao criar documento:", error);
+        }
+    }
+
+    const alterarStatusMesa = async () => {
+        await updateDoc(doc(db, "mesa", mesa.id), {
+            status: 'OCUPADA',
+        });
+    }
+
+    const fazerPedido = async () => {
+        setLoading(true);
+
+        const agora = new Date();
+
+                if (conta) {
+                    createPedidoFirebase(agora, conta.id);
+                } else{
+                    async function createConta() {
+                        const docRef = await addDoc(collection(db, "conta"), {
+                            mesa_id: mesa.id,
+                            dataAberta: agora
+                        });
+        
+                        const conta_id = docRef.id
+        
+                        if (conta_id) {
+                            createPedidoFirebase(agora, conta_id);
+                            alterarStatusMesa();
+                        }
+                    }
+        
+        
+                    createConta();
+                }
+            
+
+            
+
+        setLoading(false);
+    }
 
 
     return (
@@ -123,12 +204,19 @@ export const Produto = ({ produto, handleClose }) => {
                         <button onClick={() => { alterarQuantidade(+1) }}>+</button>
                     </div>
                 </div>
-                <div className='botaoProdutoIndividual'>
-                    <p><button className='queroJa'>Quero já</button></p>
+                {!loading ? <div className='botaoProdutoIndividual'>
+                    <p><button className='queroJa'
+                    onClick={fazerPedido} >Quero já</button></p>
                     <p><button className='adicionarCarrinho'
                         onClick={adicionandoProdutoCarrinho}
                     >Adicionar ao Carrinho</button></p>
-                </div>
+                </div> : 
+                
+                <div className='botaoProdutoIndividual'>
+                    <p><button style={{opacity: '0.5'}} className='queroJa'>Carregando...</button></p>
+                    <p><button style={{opacity: '0.5'}} className='adicionarCarrinho'
+                    >Adicionar ao Carrinho</button></p>
+                </div>}
             </div>
         </div>
     );

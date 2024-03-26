@@ -29,7 +29,7 @@ function Pedido({ pedido, fecharPedido }) {
             <div style={{ marginTop: '30px', display: 'flex', justifyContent:  'space-around' }}>
                 <b><p>Total</p></b><b><p>R${pedido.total.toFixed(2).replace(".", ",")}</p></b>
             </div>
-            <div>
+            <div className="ProdutosDoPedido">
                 {pedido.produtos.map((produto, index) => {
                     return (<div key={index} className="produtosPedido">
                         <p style={{fontSize: '22px', margin: '5px'}}>{`${produto.quantidade}x ${produto.nome}`}</p>

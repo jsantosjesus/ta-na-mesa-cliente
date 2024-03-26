@@ -26,6 +26,11 @@
     text-align: center;   
 }
 
+.produtosDoCarrinho{
+    overflow: auto;
+    height: calc(100vh - 200px);
+}
+
 .produtoCarrinho{
     display: flex;
     border-bottom: solid 1px #c8c4c4;

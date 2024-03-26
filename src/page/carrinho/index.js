@@ -111,7 +111,7 @@ function Carrinho() {
     return (
         <div className="bodyCarrinho">
             <Link to='/cardapio'><p className='fecharCarrinho'><FaChevronLeft /></p></Link><h3>Carrinho</h3>
-            {!loading ? <div>
+            {!loading ? <div className="produtosDoCarrinho">
                 {carrinho && carrinho.produtos.map((produto, index) => {
                     return <div key={index}>
                         <div className="produtoCarrinho"
