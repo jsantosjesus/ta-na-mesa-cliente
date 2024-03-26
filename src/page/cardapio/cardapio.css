@@ -144,6 +144,7 @@
     text-align: center;
     align-items: center;
     overflow: auto;
+    height: calc(100vh - 95px);
 }
 
 .imagemProdutoIndividual{
