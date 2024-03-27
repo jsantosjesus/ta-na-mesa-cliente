@@ -17,6 +17,9 @@ function Cardapio() {
     const app = useContext(FirebaseContext);
     const db = getFirestore(app);
 
+    const [searchTerm, setSearchTerm] = useState('');
+    let searchTimer;
+
     const [categorias, setCategorias] = useState();
     const [categoriaSelecionada, setCategoriaSelecinada] = useState();
 
@@ -42,16 +45,10 @@ function Cardapio() {
     });
 
 
-    // useEffect(() => {
-    //     if (categorias) {
-    //         console.log(categoriaSelecionada);
-    //     }
-    // }, [categoriaSelecionada]);
-
     async function getProdutos() {
         if (categoriaSelecionada) {
             setLoading(true);
-            const q = query(collection(db, "produto"), where("categoria_id", "==", categoriaSelecionada.id));
+            const q = query(collection(db, "produto"), where("categoria_id", "==", categoriaSelecionada.id), where("em_estoque", "==", true));
             let firebaseProdutos = [];
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
@@ -65,15 +62,52 @@ function Cardapio() {
 
 
     useEffect(() => {
-        getProdutos();
+        if (!searchTerm) {
+            getProdutos();
+        }
         // eslint-disable-next-line
-    }, [categoriaSelecionada]);
+    }, [categoriaSelecionada, searchTerm]);
+
+    const handleSearch = async () => {
+        // Converter o termo de pesquisa para minúsculas
+        const searchTermLower = searchTerm.toLowerCase();
+
+
+        setLoading(true);
+        const q = query(collection(db, "produto"), where("estabelecimento_id", "==", estabelecimento.id), where("em_estoque", "==", true));
+        let firebaseProdutos = [];
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            firebaseProdutos.push({ ...doc.data(), id: doc.id });
+        });
+
+        const results = firebaseProdutos.filter(result => result.nome.toLowerCase().includes(searchTermLower));
+
+        setProdutos(results);
+        setLoading(false);
+    }
+
+
+    const handleChange = (event) => {
+        const newSearchTerm = event.target.value;
+        setSearchTerm(newSearchTerm);
+
+        // Cancelar o temporizador existente, se houver
+        clearTimeout(searchTimer);
+
+        // Definir um novo temporizador para atrasar a pesquisa
+        searchTimer = setTimeout(() => {
+            if (newSearchTerm.length >= 2) {
+                handleSearch(); // Executa a busca se o termo de pesquisa tiver pelo menos três letras
+            }
+        }, 400); // Delay de 300 milissegundos
+    };
 
 
 
     return (
         <div className='bodyCardapio'>
-            <MenuBottom page='cardapio'/>
+            <MenuBottom page='cardapio' />
             <div className='headCardapio'>
                 <div className='titleCardapio'>
                     <h1>{estabelecimento.nome}</h1>
@@ -81,10 +115,11 @@ function Cardapio() {
 
                 <div className='pesquisaCardapio'>
                     <input type="text" placeholder="Pesquise aqui"
-                    // value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                        value={searchTerm}
+                        onChange={handleChange}
                     ></input>
                 </div>
-                <div className='categorias'>
+                <div className='categorias' style={searchTerm.length >= 2 ? {display: 'none'} : {}}>
                     {categorias && categorias.map((categoria, index) => (
 
                         <div
