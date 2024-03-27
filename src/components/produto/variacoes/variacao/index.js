@@ -57,15 +57,20 @@ export const Variacao = ({ variacao, index, mandarParaVariacoes, variacoesSeleci
         <b>{variacao.nome}</b> (min: {variacao.minimo}, max: {variacao.maximo})
       </AccordionSummary>
       <AccordionDetails>
-        <FormGroup>
-          {variacao.opcoes.map((opcao, index) => {
-            return (
-              <FormControlLabel
-                key={index}
-                control={<Checkbox />}
-                onChange={(e) => adicionarRemoverOpcao(e.target.checked, opcao)}
-                label={opcao.valor_adicional ? `${opcao.nome} (+${opcao.valor_adicional.toFixed(2).replace(".", ",")})` : opcao.nome} />
-            )
+        <FormGroup> 
+          {
+          // eslint-disable-next-line
+          variacao.opcoes.map((opcao, index) => {
+            
+            if (opcao.em_estoque === true) {
+              return (
+                <FormControlLabel
+                  key={index}
+                  control={<Checkbox />}
+                  onChange={(e) => adicionarRemoverOpcao(e.target.checked, opcao)}
+                  label={opcao.valor_adicional ? `${opcao.nome} (+${opcao.valor_adicional.toFixed(2).replace(".", ",")})` : opcao.nome} />
+              )
+            }
           })}
         </FormGroup>
       </AccordionDetails>
