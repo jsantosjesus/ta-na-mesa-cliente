@@ -14,7 +14,7 @@ export const Produto = ({ produto, handleClose }) => {
 
 
 
-    const {adicionarAoCarrinho, carrinho, mesa, user, conta} = useContext(DocsContext);
+    const {adicionarAoCarrinho, carrinho, mesa, user} = useContext(DocsContext);
 
     const [quantidade, setQuantidade] = useState(1);
 
@@ -144,9 +144,10 @@ export const Produto = ({ produto, handleClose }) => {
         }
     }
 
-    const alterarStatusMesa = async () => {
+    const alterarStatusMesa = async (conta) => {
         await updateDoc(doc(db, "mesa", mesa.id), {
             status: 'OCUPADA',
+            contaAtiva: conta
         });
     }
 
@@ -155,8 +156,8 @@ export const Produto = ({ produto, handleClose }) => {
 
         const agora = new Date();
 
-                if (conta) {
-                    createPedidoFirebase(agora, conta.id);
+                if (mesa && mesa.contaAtiva) {
+                    createPedidoFirebase(agora, mesa.contaAtiva);
                 } else{
                     async function createConta() {
                         const docRef = await addDoc(collection(db, "conta"), {
@@ -167,8 +168,11 @@ export const Produto = ({ produto, handleClose }) => {
                         const conta_id = docRef.id
         
                         if (conta_id) {
+                            await updateDoc(doc(db, "mesa", mesa.id), {
+                                contaAtiva: conta_id,
+                            });
                             createPedidoFirebase(agora, conta_id);
-                            alterarStatusMesa();
+                            alterarStatusMesa(conta_id);
                         }
                     }
         

@@ -14,7 +14,7 @@ export const DocsProvicer = ({ children }) => {
     const [carrinho, setCarrinho] = useState();
     const [quantidadePedidos, setQuantidadePedidos] = useState();
     const [pedidos, setPedidos] = useState();
-    const [conta, setConta] = useState();
+    // const [conta, setConta] = useState();
     // const [chamado, setChamado] = useState();
 
     const app = useContext(FirebaseContext);
@@ -68,24 +68,24 @@ export const DocsProvicer = ({ children }) => {
         setUser(usuario);
         navigate('/cardapio');
 
-        if (mesa) {
-            const queryConta = query(collection(db, "conta"), where("mesa_id", "==", mesa.id));
-            onSnapshot(queryConta, (querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    if (!doc.data().dataPaga) {
-                        const cnta = doc.data();
-                        cnta.id = doc.id;
-                        setConta(cnta);
-                    }
-                })
-            });
+        // if (mesa) {
+        //     const queryConta = query(collection(db, "conta"), where("mesa_id", "==", mesa.id));
+        //     onSnapshot(queryConta, (querySnapshot) => {
+        //         querySnapshot.forEach((doc) => {
+        //             if (!doc.data().dataPaga) {
+        //                 const cnta = doc.data();
+        //                 cnta.id = doc.id;
+        //                 setConta(cnta);
+        //             }
+        //         })
+        //     });
             // getChamado();
-        }
+        // }
     };
 
     useEffect(() => {
-        if (conta) {
-            const q = query(collection(db, "pedido"), where("conta_id", "==", conta.id));
+        if (mesa && mesa.contaAtiva) {
+            const q = query(collection(db, "pedido"), where("conta_id", "==", mesa.contaAtiva));
             onSnapshot(q, (querySnapshot) => {
                 const pddos = [];
                 let quantidade = 0;
@@ -105,7 +105,7 @@ export const DocsProvicer = ({ children }) => {
             });
         }
         // eslint-disable-next-line
-    }, [conta]);
+    }, [mesa]);
 
     const apagarNome = () => {
         localStorage.removeItem('nomeDoUsuario');
@@ -153,7 +153,6 @@ export const DocsProvicer = ({ children }) => {
                 apagarCarrinho,
                 quantidadePedidos,
                 pedidos,
-                conta,
             }}>
             {children}
         </DocsContext.Provider>

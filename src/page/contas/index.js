@@ -12,7 +12,7 @@ function Contas() {
     const app = useContext(FirebaseContext);
     const db = getFirestore(app);
 
-    const { conta, pedidos, mesa } = useContext(DocsContext);
+    const { pedidos, mesa } = useContext(DocsContext);
     let total = 0;
 
     const pedirConta = async () => {
@@ -55,7 +55,7 @@ function Contas() {
         <div>
             <Link to='/cardapio'><p className='fecharConta'><FaChevronLeft /></p></Link><h3 className="titleConta">Conta</h3>
             <div className="ProdutosConta">
-                {pedidos.map((pedido, index) => {
+                {mesa.contaAtiva && pedidos && pedidos.map((pedido, index) => {
                     total = total + pedido.total;
                     return (
                         <span key={index}>
@@ -75,9 +75,9 @@ function Contas() {
                 })}
             </div>
             <div className='footerConta'>
-                <div className="footerContaTotal"><p>Total</p><p>R$ {conta && total ? total.toFixed(2).replace(".", ",") : "0,00"}</p></div>
+                <div className="footerContaTotal"><p>Total</p><p>R$ {mesa.contaAtiva && total ? total.toFixed(2).replace(".", ",") : "0,00"}</p></div>
                 {mesa.chamandoGarcom && <><button style={{ opacity: '0.5' }}>Chamando Garçom...</button><p onClick={cancelarPedirConta}>cancelar</p></>}
-                {!mesa.chamandoGarcom && conta && total && <button onClick={pedirConta}>Pedir Conta</button>}
+                {!mesa.chamandoGarcom && mesa.contaAtiva && total && <button onClick={pedirConta}>Pedir Conta</button>}
                 {!mesa.chamandoGarcom && !total && <button style={{ opacity: '0.5' }}>Pedir Conta</button>}
             </div>
         </div>
