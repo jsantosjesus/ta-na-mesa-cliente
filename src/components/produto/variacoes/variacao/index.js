@@ -5,10 +5,14 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { useState } from 'react';
+
+
 
 export const Variacao = ({ variacao, index, mandarParaVariacoes, variacoesSelecionadas }) => {
 
-
+  const [opcoesSelecionadas, setOpcoesSelecionadas] = useState([]);
+  const [quantidadeOpcoesSelecionadas, setQuantidadeOpcoesSelecionadas] = useState(0);
   const adicionarRemoverOpcao = (valor, opcao) => {
 
     let op = [];
@@ -41,37 +45,56 @@ export const Variacao = ({ variacao, index, mandarParaVariacoes, variacoesSeleci
     let vari = {
       nome: variacao.nome,
       opcoes: op,
-      total: totalAdicional
+      total: totalAdicional,
+      ...(op.length < variacao.minimo ? {satifazVariacoes: false} : {satifazVariacoes: true})
     }
 
     mandarParaVariacoes(vari);
+    console.log(vari);
+    setOpcoesSelecionadas(op);
+    setQuantidadeOpcoesSelecionadas(op.length);
   }
 
   return (
     <Accordion key={index}>
       <AccordionSummary
-        //   expandIcon={<ExpandMoreIcon />}
         aria-controls={index}
         id={index}
       >
-        <b>{variacao.nome}</b> (min: {variacao.minimo}, max: {variacao.maximo})
+        <b>{variacao.nome}</b> ({quantidadeOpcoesSelecionadas < variacao.minimo ?
+          <span style={{ color: 'red' }}>min: {variacao.minimo}</span> :
+          <span>min: {variacao.minimo}</span>}, max: {variacao.maximo})
+        {quantidadeOpcoesSelecionadas < variacao.minimo && <span style={{ color: 'red' }}>*</span>}
       </AccordionSummary>
       <AccordionDetails>
-        <FormGroup> 
+        <FormGroup>
           {
-          // eslint-disable-next-line
-          variacao.opcoes.map((opcao, index) => {
-            
-            if (opcao.em_estoque === true) {
-              return (
-                <FormControlLabel
-                  key={index}
-                  control={<Checkbox />}
-                  onChange={(e) => adicionarRemoverOpcao(e.target.checked, opcao)}
-                  label={opcao.valor_adicional ? `${opcao.nome} (+${opcao.valor_adicional.toFixed(2).replace(".", ",")})` : opcao.nome} />
-              )
-            }
-          })}
+            // eslint-disable-next-line
+            variacao.opcoes.map((opcao, index) => {
+
+              if (opcao.em_estoque === true) {
+
+                const opcaoEstaSelecionada = opcoesSelecionadas.some((opc) => opc === opcao);
+                // let opcaoDisponivel;
+
+                // if(!opcaoEstaSelecionada && opcoesSelecionadas.length >= 2){
+                //   opcaoDisponivel = true;
+                // } else {
+                //   opcaoDisponivel = false;
+                // }
+
+                return (
+                  <FormControlLabel
+                    key={index}
+                    control={<Checkbox
+                      disabled={!opcaoEstaSelecionada && quantidadeOpcoesSelecionadas >= variacao.maximo ? true : false}
+                    />}
+                    onChange={(e) => adicionarRemoverOpcao(e.target.checked, opcao)}
+                    label={opcao.valor_adicional ? `${opcao.nome} (+${opcao.valor_adicional.toFixed(2).replace(".", ",")})` : opcao.nome} />
+
+                )
+              }
+            })}
         </FormGroup>
       </AccordionDetails>
     </Accordion>

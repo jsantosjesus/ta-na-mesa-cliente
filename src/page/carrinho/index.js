@@ -16,7 +16,7 @@ function Carrinho() {
 
     const navigate = useNavigate();
 
-    const { carrinho, adicionarAoCarrinho, apagarCarrinho, mesa, user, conta } = useContext(DocsContext);
+    const { carrinho, adicionarAoCarrinho, apagarCarrinho, mesa, user } = useContext(DocsContext);
     const [loading, setLoading] = useState(false);
 
     const alterarQuantidadeCarrinho = (produto, index, operador) => {
@@ -70,9 +70,10 @@ function Carrinho() {
         }
     }
 
-    const alterarStatusMesa = async () => {
+    const alterarStatusMesa = async (conta_id) => {
         await updateDoc(doc(db, "mesa", mesa.id), {
             status: 'OCUPADA',
+            contaAtiva: conta_id
         });
     }
 
@@ -81,8 +82,8 @@ function Carrinho() {
 
         const agora = new Date();
 
-                if (conta) {
-                    createPedidoFirebase(agora, conta.id);
+                if (mesa.contaAtiva) {
+                    createPedidoFirebase(agora, mesa.contaAtiva);
                 } else{
                     async function createConta() {
                         const docRef = await addDoc(collection(db, "conta"), {
@@ -94,7 +95,7 @@ function Carrinho() {
         
                         if (conta_id) {
                             createPedidoFirebase(agora, conta_id);
-                            alterarStatusMesa();
+                            alterarStatusMesa(conta_id);
                         }
                     }
         

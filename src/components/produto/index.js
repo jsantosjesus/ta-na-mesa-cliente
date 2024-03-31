@@ -8,13 +8,13 @@ import { FirebaseContext } from "../../contexts/appContext";
 
 export const Produto = ({ produto, handleClose }) => {
 
-    
+
     const app = useContext(FirebaseContext);
     const db = getFirestore(app);
 
 
 
-    const {adicionarAoCarrinho, carrinho, mesa, user} = useContext(DocsContext);
+    const { adicionarAoCarrinho, carrinho, mesa, user } = useContext(DocsContext);
 
     const [quantidade, setQuantidade] = useState(1);
 
@@ -23,19 +23,67 @@ export const Produto = ({ produto, handleClose }) => {
     const [subtotal, setSubtotal] = useState(0);
 
     const [variacoesSelecionadas, setVariacoesSelecionadas] = useState([]);
+    const [satifazVariacoes, setSatifazVariacoes] = useState(false);
     const [totalVariacoes, setTotalVariacoes] = useState(0);
 
 
-
+    // espero não precisar mecher mais nisso kkkkk
     const incluirVariacoes = (varis) => {
         setVariacoesSelecionadas(varis);
-        let totalVariacoesSelecionadas = 0;
+
+        setSatifazVariacoes(true);
+
+        
+        let quantidadeVariacoesObrigatoriasSelecionadas = 0;
+
+        let variacoesObrigatorias = [];
+
+        produto.variacoes.map((variacao) => {
+            // aqui eu defino quais são as variacoes obrigatorias e com length disso tambem  sei a quantidade delas
+            if (variacao.minimo > 0) {
+                variacoesObrigatorias.push(variacao.nome);
+            } 
+            return null
+        });
+
+        let totalPrecoVariacoesSelecionadas = 0;
         // eslint-disable-next-line
-        varis.map((variacao) => {
-            totalVariacoesSelecionadas = totalVariacoesSelecionadas + variacao.total;
+        varis.map((variacaoSelecionada) => {
+            totalPrecoVariacoesSelecionadas = totalPrecoVariacoesSelecionadas + variacaoSelecionada.total;
+
+            // toda vez que rodo o map das variacoes selecionadas mandadas pra cá, 
+            // confiro se a variação selecionada é obrigatoria ou não
+            variacoesObrigatorias.map((variacaoObrigatoria) => {
+                if(variacaoObrigatoria === variacaoSelecionada.nome){
+                    // se for obrigatoria, somo a quantidade de variaçõea obrigatorias selecionadas
+                    quantidadeVariacoesObrigatoriasSelecionadas = quantidadeVariacoesObrigatoriasSelecionadas + 1;
+                }
+
+                return null
+            })
         })
 
-        setTotalVariacoes(totalVariacoesSelecionadas);
+
+        // aqui eu testo se a quantidade de variações obrigatorias selecionadas 
+        // é maior ou igual a quantidade de variações obrigatorias 
+        if (quantidadeVariacoesObrigatoriasSelecionadas >= variacoesObrigatorias.length) {
+            // se sim, testo se todas satifazem a quantidade de opções mínimas selecionadas
+            if (variacoesSelecionadas.every((va) => va.satifazVariacoes === true)) {
+                // se todas forem true, informo que todas as variações satisfazem a quantidade de escolha mínima 
+                // e habilito os botões de pedir produto
+                setSatifazVariacoes(true);
+            } else {
+                // se alguma for false, os botões continuam desabilitados
+                setSatifazVariacoes(false);
+            }
+            // esse else é pra quando a quantidade de variações obrigatorias selecionadas
+            // é menor que a quantidade de variações obrigatorias
+        } else {
+            setSatifazVariacoes(false);
+        }
+
+
+        setTotalVariacoes(totalPrecoVariacoesSelecionadas);
     }
 
 
@@ -74,7 +122,7 @@ export const Produto = ({ produto, handleClose }) => {
             preco: produto.preco + totalVariacoes,
             observacao: observacoes,
             quantidade: quantidade,
-            ...(variacoesSelecionadas.length !== 0 && {variacoes: variacoesSelecionadas})
+            ...(variacoesSelecionadas.length !== 0 && { variacoes: variacoesSelecionadas })
         }
 
         return p;
@@ -120,16 +168,16 @@ export const Produto = ({ produto, handleClose }) => {
                     id: mesa.id,
                     numero: mesa.numero
                 },
-                produtos: [   
-                        {
-                            id: produto.id,
-                            ...(produto.imagem && { imagem: produto.imagem }),
-                            nome: produto.nome,
-                            preco: produto.preco + totalVariacoes,
-                            observacao: observacoes,
-                            quantidade: quantidade,
-                            ...(variacoesSelecionadas.length !== 0 && {variacoes: variacoesSelecionadas})
-                        } 
+                produtos: [
+                    {
+                        id: produto.id,
+                        ...(produto.imagem && { imagem: produto.imagem }),
+                        nome: produto.nome,
+                        preco: produto.preco + totalVariacoes,
+                        observacao: observacoes,
+                        quantidade: quantidade,
+                        ...(variacoesSelecionadas.length !== 0 && { variacoes: variacoesSelecionadas })
+                    }
                 ],
                 status: 'aguardando',
                 total: (produto.preco + totalVariacoes) * quantidade,
@@ -156,32 +204,32 @@ export const Produto = ({ produto, handleClose }) => {
 
         const agora = new Date();
 
-                if (mesa && mesa.contaAtiva) {
-                    createPedidoFirebase(agora, mesa.contaAtiva);
-                } else{
-                    async function createConta() {
-                        const docRef = await addDoc(collection(db, "conta"), {
-                            mesa_id: mesa.id,
-                            dataAberta: agora
-                        });
-        
-                        const conta_id = docRef.id
-        
-                        if (conta_id) {
-                            await updateDoc(doc(db, "mesa", mesa.id), {
-                                contaAtiva: conta_id,
-                            });
-                            createPedidoFirebase(agora, conta_id);
-                            alterarStatusMesa(conta_id);
-                        }
-                    }
-        
-        
-                    createConta();
-                }
-            
+        if (mesa && mesa.contaAtiva) {
+            createPedidoFirebase(agora, mesa.contaAtiva);
+        } else {
+            async function createConta() {
+                const docRef = await addDoc(collection(db, "conta"), {
+                    mesa_id: mesa.id,
+                    dataAberta: agora
+                });
 
-            
+                const conta_id = docRef.id
+
+                if (conta_id) {
+                    await updateDoc(doc(db, "mesa", mesa.id), {
+                        contaAtiva: conta_id,
+                    });
+                    createPedidoFirebase(agora, conta_id);
+                    alterarStatusMesa(conta_id);
+                }
+            }
+
+
+            createConta();
+        }
+
+
+
 
         setLoading(false);
     }
@@ -196,7 +244,7 @@ export const Produto = ({ produto, handleClose }) => {
                 <img className='imagemProdutoIndividual' src={!produto.imagem ? imagemVaziaLogo : produto.imagem} alt='imagem do produto' />
                 <h3 className='titleProdutoIndividual'>{produto.nome}</h3>
                 <p className='descricaoProdutoIndividual'>{produto.descricao}</p>
-                {produto.variacoes && <Variacoes variacoes={produto.variacoes} mandarParaProduto={incluirVariacoes} variacoesSelecionadas={variacoesSelecionadas}/>}
+                {produto.variacoes && <Variacoes variacoes={produto.variacoes} mandarParaProduto={incluirVariacoes} variacoesSelecionadas={variacoesSelecionadas} />}
                 <textarea id='textObservacao' onChange={e => setObservacoes(e.target.value)} placeholder='Observações' />
             </div>}
             <div className='footerProdutoIndividual'>
@@ -208,19 +256,29 @@ export const Produto = ({ produto, handleClose }) => {
                         <button onClick={() => { alterarQuantidade(+1) }}>+</button>
                     </div>
                 </div>
-                {!loading ? <div className='botaoProdutoIndividual'>
-                    <p><button className='queroJa'
-                    onClick={fazerPedido} >Quero já</button></p>
-                    <p><button className='adicionarCarrinho'
-                        onClick={adicionandoProdutoCarrinho}
-                    >Adicionar ao Carrinho</button></p>
-                </div> : 
-                
-                <div className='botaoProdutoIndividual'>
-                    <p><button style={{opacity: '0.5'}} className='queroJa'>Carregando...</button></p>
-                    <p><button style={{opacity: '0.5'}} className='adicionarCarrinho'
-                    >Adicionar ao Carrinho</button></p>
-                </div>}
+                {!loading ?
+                    <>
+                        {produto.variacoes && !satifazVariacoes ?
+                            <div className='botaoProdutoIndividual'>
+                                <p><button style={{ opacity: '0.5' }} className='queroJa'>Quero já</button></p>
+                                <p><button style={{ opacity: '0.5' }} className='adicionarCarrinho'
+                                >Adicionar ao Carrinho</button></p>
+                            </div> :
+                            <div className='botaoProdutoIndividual'>
+                                <p><button className='queroJa'
+                                    onClick={fazerPedido} >Quero já</button></p>
+                                <p><button className='adicionarCarrinho'
+                                    onClick={adicionandoProdutoCarrinho}
+                                >Adicionar ao Carrinho</button></p>
+                            </div>
+                        }
+                    </> :
+
+                    <div className='botaoProdutoIndividual'>
+                        <p><button style={{ opacity: '0.5' }} className='queroJa'>Carregando...</button></p>
+                        <p><button style={{ opacity: '0.5' }} className='adicionarCarrinho'
+                        >Adicionar ao Carrinho</button></p>
+                    </div>}
             </div>
         </div>
     );
