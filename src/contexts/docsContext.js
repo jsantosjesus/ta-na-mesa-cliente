@@ -14,6 +14,7 @@ export const DocsProvicer = ({ children }) => {
     const [carrinho, setCarrinho] = useState();
     const [quantidadePedidos, setQuantidadePedidos] = useState();
     const [pedidos, setPedidos] = useState();
+    const [tokenGarcom, setTokenGarcom] = useState();
     // const [conta, setConta] = useState();
     // const [chamado, setChamado] = useState();
 
@@ -41,10 +42,20 @@ export const DocsProvicer = ({ children }) => {
                 dataMesa.id = doc.id;
                 setMesa(dataMesa);
                 getEstabelecimento(dataMesa.estabelecimento_id);
+                getTokenGarcom(dataMesa.garcom_id);
             }
         });
 
 
+    }
+
+    const getTokenGarcom = (idGarcom) => {
+        onSnapshot(doc(db, "usuario", idGarcom), (doc) => {
+
+            if (doc) {
+                setTokenGarcom(doc.data().tokenMessage);
+            }
+        });
     }
 
     const getEstabelecimento = async (id) => {
@@ -79,7 +90,7 @@ export const DocsProvicer = ({ children }) => {
         //             }
         //         })
         //     });
-            // getChamado();
+        // getChamado();
         // }
     };
 
@@ -153,6 +164,7 @@ export const DocsProvicer = ({ children }) => {
                 apagarCarrinho,
                 quantidadePedidos,
                 pedidos,
+                tokenGarcom
             }}>
             {children}
         </DocsContext.Provider>

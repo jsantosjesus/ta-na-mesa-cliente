@@ -5,13 +5,33 @@ import { addDoc, collection, doc, getFirestore, updateDoc } from "firebase/fires
 import { FirebaseContext } from "../../contexts/appContext";
 import './chamarGarcom.css';
 
+
 function ChamarGarcom() {
 
-    const {mesa} = useContext(DocsContext);
+    const {mesa, tokenGarcom} = useContext(DocsContext);
 
     
     const app = useContext(FirebaseContext);
     const db = getFirestore(app);
+
+
+    const sendMessage = () => {
+        fetch('http://localhost:3333/message', {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+            // 'Access-Control-Allow-Origin': '*'
+          },
+          body: JSON.stringify({
+              title: `Chamado de mesa ${mesa.numero}`,
+              body: `A mesa ${mesa.numero} precisa de ajuda com algo!`,
+              deviceToken: tokenGarcom
+            }),
+        })
+        .then(response => console.log('Resposta:', response))
+        .catch(error => console.error('Erro ao enviar notificação:', error));
+      };
 
     const abrirChamadoGarcom = async () => {
         try {
@@ -31,6 +51,7 @@ function ChamarGarcom() {
                 chamandoGarcom: chamado,
             });
 
+            sendMessage();
         } catch (error) {
             console.error("Erro ao criar documento:", error);
         }

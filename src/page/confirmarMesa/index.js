@@ -21,6 +21,7 @@ function ConfirmarMesa() {
     // assim que a pagina é carregada ela já chama a função getMesa
     useEffect(() => {
         getMesa(id);
+        
         // eslint-disable-next-line
     }, [])
 

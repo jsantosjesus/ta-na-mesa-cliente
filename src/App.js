@@ -4,7 +4,9 @@ import { FirebaseProvider } from './contexts/appContext';
 import { BrowserRouter } from 'react-router-dom';
 import Rotas from './router';
 
+
 function App() {
+
   return (
 
     <FirebaseProvider>

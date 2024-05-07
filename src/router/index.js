@@ -8,6 +8,7 @@ import Carrinho from '../page/carrinho';
 import Pedidos from '../page/pedidos';
 import Contas from '../page/contas';
 import ChamarGarcom from '../page/chamarGarcom';
+import { TesteNotification } from '../page/testeNotification';
 
 export default function Rotas() {
 
@@ -82,6 +83,13 @@ export default function Rotas() {
                         <Private>
                             <ChamarGarcom />
                         </Private>
+                    } />
+                <Route
+                    exact
+                    path="/notificacao"
+                    element={
+                        <TesteNotification />
+
                     } />
             </Routes>
         </DocsProvicer>
