@@ -16,7 +16,7 @@ function ChamarGarcom() {
 
 
     const sendMessage = () => {
-        fetch('http://localhost:3333/message', {
+        fetch('https://ta-na-mesa-api-qb85.onrender.com/message', {
           method: 'POST',
           mode: 'cors',
           headers: {
