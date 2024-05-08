@@ -52,7 +52,8 @@ function Carrinho() {
                 dataPedido: agora,
                 mesa: {
                     id: mesa.id,
-                    numero: mesa.numero
+                    numero: mesa.numero,
+                    garcom: mesa.garcom_id
                 },
                 produtos: carrinho.produtos,
                 status: 'aguardando',

@@ -12,8 +12,26 @@ function Contas() {
     const app = useContext(FirebaseContext);
     const db = getFirestore(app);
 
-    const { pedidos, mesa } = useContext(DocsContext);
+    const { pedidos, mesa, tokenGarcom } = useContext(DocsContext);
     let total = 0;
+
+    const sendMessage = () => {
+        fetch('https://ta-na-mesa-api-qb85.onrender.com/message', {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+            // 'Access-Control-Allow-Origin': '*'
+          },
+          body: JSON.stringify({
+              title: `CONTA DE MESA ${mesa.numero}`,
+              body: `A mesa ${mesa.numero} está pedindo a conta!`,
+              deviceToken: tokenGarcom
+            }),
+        })
+        .then(response => console.log('Resposta:', response))
+        .catch(error => console.error('Erro ao enviar notificação:', error));
+      };
 
     const pedirConta = async () => {
         let chamado;
@@ -32,6 +50,8 @@ function Contas() {
             await updateDoc(doc(db, "mesa", mesa.id), {
                 chamandoGarcom: chamado,
             });
+
+            sendMessage();
 
         } catch (error) {
             console.error("Erro ao criar documento:", error);
