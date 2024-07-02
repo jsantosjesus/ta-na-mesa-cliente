@@ -38,6 +38,7 @@ function ChamarGarcom() {
             let chamado;
             const docRef = await addDoc(collection(db, "chamado"), {
                 estabelecimento_id: mesa.estabelecimento_id,
+                garcom_id: mesa.garcom_id,
                 mesa: {
                     id: mesa.id,
                     numero: mesa.numero
