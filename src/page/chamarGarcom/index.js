@@ -64,7 +64,7 @@ function ChamarGarcom() {
                 status: 'CANCELADO',
             }); 
             await updateDoc(doc(db, "mesa", mesa.id), {
-                chamandoGarcom: false,
+                chamandoGarcom: '',
             });
 
         } catch (error) {
