@@ -21,7 +21,7 @@ function Contas() {
           mode: 'cors',
           headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+            // 'Access-Control-Allow-Origin': '*'
           },
           body: JSON.stringify({
               title: `CONTA DE MESA ${mesa.numero}`,
