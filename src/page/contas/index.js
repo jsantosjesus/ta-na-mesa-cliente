@@ -77,7 +77,7 @@ function Contas() {
             <Link to='/cardapio'><p className='fecharConta'><FaChevronLeft /></p></Link><h3 className="titleConta">Conta</h3>
             <div className="ProdutosConta">
                 {mesa.contaAtiva && pedidos && pedidos.map((pedido, index) => {
-                    if (pedido.status !== "cancelado") {
+                    if (pedido.status === "pronto") {
                         total = total + pedido.total;
                         return (
                             <span key={index}>
